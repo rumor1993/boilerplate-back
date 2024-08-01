@@ -3,6 +3,7 @@ package com.rumor.yumback.domains.oauth2.handler;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
 import com.rumor.yumback.enumeration.UserRole;
 import com.rumor.yumback.utils.JwtUtils;
+import com.rumor.yumback.utils.ResourcesProperties;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import java.util.Iterator;
 @RequiredArgsConstructor
 public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
+    private final ResourcesProperties resourcesProperties;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -36,7 +38,7 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
 
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect(resourcesProperties.getPath());
     }
 
     private Cookie createCookie(String authorization, String token) {
@@ -44,6 +46,7 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         cookie.setMaxAge(60*60*60);
         //cookie.setSecure(true);
         cookie.setPath("/");
+        cookie.setDomain("localhost");
         cookie.setHttpOnly(true);
         return cookie;
     }
