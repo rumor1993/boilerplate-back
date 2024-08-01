@@ -33,7 +33,7 @@ public class FileSystemStorageService {
 
         String fileExtension = com.google.common.io.Files.getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
         Path rootLocation = filesProperties.getRootLocation();
-        Path destinationFile = rootLocation.resolve(UUID.randomUUID() + fileExtension)
+        Path destinationFile = rootLocation.resolve(UUID.randomUUID() + "." + fileExtension)
                 .normalize()
                 .toAbsolutePath();
 

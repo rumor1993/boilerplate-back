@@ -64,6 +64,7 @@ public class BeadsQueryDslRepository {
                 .innerJoin(user).on(beadCraft.creator.id.eq(user.id))
                 .fetchJoin()
                 .where((category == null || category == BeadCraftCategory.ALL) ? Expressions.TRUE : beadCraft.category.eq(category))
+                .limit(pageable.getPageSize())
                 .groupBy(
                         beadCraft.id,
                         beadCraft.name,
