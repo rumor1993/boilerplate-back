@@ -9,4 +9,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @RequiredArgsConstructor
 public class ResourcesProperties {
     private final String path;
+    private final String domain;
 }
