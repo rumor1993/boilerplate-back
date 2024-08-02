@@ -1,5 +1,6 @@
 package com.rumor.yumback.common;
 
+import com.rumor.yumback.common.errors.OauthUserNotFoundException;
 import com.rumor.yumback.common.errors.StorageException;
 import com.rumor.yumback.common.errors.StorageFileNotFoundException;
 import com.rumor.yumback.common.errors.UserNotFoundException;
@@ -43,4 +44,11 @@ public class CustomControllerAdvice {
         ErrorResponse errorResponse = ErrorResponse.create(ex, HttpStatus.NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(errorResponse.getStatusCode()).body(errorResponse);
     }
+
+    @ExceptionHandler(OauthUserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(OauthUserNotFoundException ex) {
+        ErrorResponse errorResponse = ErrorResponse.create(ex, HttpStatus.NOT_FOUND, ex.getMessage());
+        return ResponseEntity.status(errorResponse.getStatusCode()).body(errorResponse);
+    }
+
 }

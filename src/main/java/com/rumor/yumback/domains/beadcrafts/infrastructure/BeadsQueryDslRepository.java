@@ -4,6 +4,7 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimplePath;
@@ -54,9 +55,7 @@ public class BeadsQueryDslRepository {
                                         beadCraft.creator.updatedAt.as("updatedAt")
                                 ),
                                 beadCraftLikes.id.count().as("likeCount"),
-                                Expressions.cases()
-                                        .when(beadCraftLikes.user.eq(loginUser)).then(true)
-                                        .otherwise(false).as("isLiked"),
+                                getLiked(loginUser),
                                 beadCraft.createdAt,
                                 beadCraft.updatedAt))
                 .from(beadCraft)
@@ -94,10 +93,20 @@ public class BeadsQueryDslRepository {
 
         }
 
-
         JPAQuery<Long> count = jpaQueryFactory.select(beadCraft.count())
                 .from(beadCraft);
 
         return PageableExecutionUtils.getPage(beadCraftQuery.fetch(), pageable, count::fetchOne);
     }
+
+    private static BooleanExpression getLiked(User loginUser) {
+        if ( loginUser == null ) {
+            return Expressions.FALSE.as("isLiked");
+        }
+
+        return Expressions.cases()
+                .when(beadCraftLikes.user.eq(loginUser)).then(true)
+                .otherwise(false).as("isLiked");
+    }
+
 }

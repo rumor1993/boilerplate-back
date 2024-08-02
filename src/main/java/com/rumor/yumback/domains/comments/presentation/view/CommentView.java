@@ -1,5 +1,6 @@
 package com.rumor.yumback.domains.comments.presentation.view;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.rumor.yumback.domains.comments.domain.Comment;
 import com.rumor.yumback.domains.users.presentation.view.UserView;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class CommentView {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
+    @QueryProjection
     public CommentView(Comment savedComment) {
         this.id = savedComment.getId();
         this.contents = savedComment.getContents();

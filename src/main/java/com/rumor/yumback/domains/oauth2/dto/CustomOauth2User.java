@@ -1,5 +1,6 @@
 package com.rumor.yumback.domains.oauth2.dto;
 
+import com.rumor.yumback.common.errors.OauthUserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;

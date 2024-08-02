@@ -1,6 +1,6 @@
 package com.rumor.yumback.domains.posts.presentation.request;
 
-import com.rumor.yumback.domains.posts.application.PostDto;
+import com.rumor.yumback.domains.posts.application.PostRegisterDto;
 import com.rumor.yumback.enumeration.PostCategory;
 
 import java.util.UUID;
@@ -12,7 +12,7 @@ public record PostRequest(
         String contents,
         UUID userId
 ) {
-    public PostDto toDto() {
-        return new PostDto(title, category, description, contents, userId);
+    public PostRegisterDto toDto() {
+        return new PostRegisterDto(title, category, description, contents, userId);
     }
 }

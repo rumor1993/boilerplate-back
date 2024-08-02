@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "post")
+@Table(name = "posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends AuditableEntity {
     @Id
@@ -30,6 +30,8 @@ public class Post extends AuditableEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User creator;
+    @Column(name="view_count", columnDefinition = "bigint default 0")
+    private Long viewCount = 0L;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
@@ -40,5 +42,9 @@ public class Post extends AuditableEntity {
         this.description = description;
         this.contents = contents;
         this.creator = creator;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 }

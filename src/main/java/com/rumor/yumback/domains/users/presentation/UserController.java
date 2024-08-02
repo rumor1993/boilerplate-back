@@ -1,6 +1,7 @@
 package com.rumor.yumback.domains.users.presentation;
 
 import com.rumor.yumback.common.FilesProperties;
+import com.rumor.yumback.common.errors.CheckAuthentication;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
 import com.rumor.yumback.domains.users.application.UserService;
 import com.rumor.yumback.domains.users.domain.User;
@@ -19,6 +20,7 @@ public class UserController {
     private final FilesProperties filesProperties;
 
     @GetMapping("/me")
+    @CheckAuthentication
     public UserView me(@AuthenticationPrincipal CustomOauth2User customOauth2User) {
         User foundUser = userService.profile(customOauth2User.getUsername());
         return UserView.of(foundUser);

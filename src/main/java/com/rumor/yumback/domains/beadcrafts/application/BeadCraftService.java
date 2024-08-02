@@ -10,6 +10,7 @@ import com.rumor.yumback.domains.files.application.FileSystemStorageService;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
 import com.rumor.yumback.enumeration.BeadCraftCategory;
+import com.rumor.yumback.enumeration.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,11 +41,8 @@ public class BeadCraftService {
         return beadCraftJpaRepository.save(beadCraft);
     }
 
-    public Page<BeadCraftDto> beadCrafts(String username, Pageable pageable) {
-        User foundUser = userJpaRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("not found user"));
-
-        return beadCraftJpaRepository.findBeadCraftsWithDetailsAndLikes(foundUser.getId(), pageable);
+    public Page<BeadCraftView> beadCrafts(Pageable pageable) {
+        return beadsQueryDslRepository.findBeadCrafts(null, pageable, null);
     }
 
     public Page<BeadCraftView> beadCrafts(String username, BeadCraftCategory category, Pageable pageable) {
@@ -62,8 +60,8 @@ public class BeadCraftService {
                 .orElseThrow(() -> new RuntimeException("not found bead craft"));
 
         return beadCraftLikesJpaRepository.findByBeadCraftAndUser(foundBeadCraft, foundUser)
-                .map(like -> {
-                    unlikes(foundBeadCraft.getId(), foundUser.getUsername());
+                .map(beadCraftLikes -> {
+                    unlikes(beadCraftLikes);
                     return "좋아요가 취소되었습니다.";
                 })
                 .orElseGet(() -> {
@@ -72,16 +70,7 @@ public class BeadCraftService {
                 });
     }
 
-    private void unlikes(UUID id, String username) {
-        User foundUser = userJpaRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("not found user"));
-
-        BeadCraft foundBeadCraft = beadCraftJpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("not found bead craft"));
-
-        BeadCraftLikes foundBeadCraftLikes = beadCraftLikesJpaRepository.findByBeadCraftAndUser(foundBeadCraft, foundUser)
-                .orElseThrow(() -> new RuntimeException("not found bead craft likes"));
-
-        beadCraftLikesJpaRepository.delete(foundBeadCraftLikes);
+    private void unlikes(BeadCraftLikes beadCraftLikes) {
+        beadCraftLikesJpaRepository.delete(beadCraftLikes);
     }
 }
