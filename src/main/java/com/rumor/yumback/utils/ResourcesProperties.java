@@ -10,4 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ResourcesProperties {
     private final String path;
     private final String domain;
+    private final String url;
 }

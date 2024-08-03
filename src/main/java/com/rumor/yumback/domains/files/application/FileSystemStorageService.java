@@ -4,6 +4,7 @@ import com.rumor.yumback.common.FilesProperties;
 import com.rumor.yumback.common.errors.StorageException;
 import com.rumor.yumback.common.errors.StorageFileNotFoundException;
 import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
+import com.rumor.yumback.utils.ResourcesProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class FileSystemStorageService {
     private final FilesProperties filesProperties;
     private final UserJpaRepository userJpaRepository;
+    private final ResourcesProperties resourcesProperties;
 
     public Path store(MultipartFile file) {
         if (file.isEmpty()) {
@@ -73,10 +76,10 @@ public class FileSystemStorageService {
 
     // properties 에서 받아서 요청주소 처리 필요
     public String loadAsUrl(Path savedFile) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("files/")
-                .path(savedFile.getFileName().toString())
-                .toUriString();
+        return Paths.get(resourcesProperties.getUrl())
+                .resolve("files/")
+                .resolve(savedFile.getFileName().toString())
+                .toString();
 
     }
 }
