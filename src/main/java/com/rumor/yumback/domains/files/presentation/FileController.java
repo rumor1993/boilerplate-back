@@ -1,5 +1,6 @@
 package com.rumor.yumback.domains.files.presentation;
 
+import com.rumor.yumback.common.errors.CheckAuthentication;
 import com.rumor.yumback.domains.files.application.FileSystemStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -30,6 +31,7 @@ public class FileController {
     }
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @CheckAuthentication
     public ResponseEntity<String> store(@RequestPart MultipartFile file) throws MalformedURLException {
         Path savedFile = fileSystemStorageService.store(file);
         String uriString = fileSystemStorageService.loadAsUrl(savedFile);

@@ -28,6 +28,7 @@ public class Comment extends AuditableEntity {
     @JoinColumn(name = "post_id")
     private Post post;
     @OneToMany(mappedBy = "comment")
+    @OrderBy("createdAt asc ")
     private List<ReComment> reComments = new ArrayList<>();
 
     public Comment(String contents, User creator, Post post) {

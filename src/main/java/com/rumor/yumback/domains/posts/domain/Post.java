@@ -34,6 +34,7 @@ public class Post extends AuditableEntity {
     private Long viewCount = 0L;
 
     @OneToMany(mappedBy = "post")
+    @OrderBy("createdAt asc")
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, PostCategory category, String description, String contents, User creator) {
