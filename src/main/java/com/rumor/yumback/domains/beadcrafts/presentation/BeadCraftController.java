@@ -34,7 +34,7 @@ public class BeadCraftController {
     @GetMapping
     public Page<BeadCraftView> beadCrafts(@AuthenticationPrincipal CustomOauth2User customOauth2User, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) BeadCraftCategory category) {
         if (customOauth2User == null) {
-            return beadCraftService.beadCrafts(pageable);
+            return beadCraftService.beadCrafts(pageable, category);
         }
 
         return beadCraftService.beadCrafts(customOauth2User.getUsername(), category, pageable);

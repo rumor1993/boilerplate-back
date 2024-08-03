@@ -10,15 +10,12 @@ import com.rumor.yumback.domains.files.application.FileSystemStorageService;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
 import com.rumor.yumback.enumeration.BeadCraftCategory;
-import com.rumor.yumback.enumeration.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -41,8 +38,8 @@ public class BeadCraftService {
         return beadCraftJpaRepository.save(beadCraft);
     }
 
-    public Page<BeadCraftView> beadCrafts(Pageable pageable) {
-        return beadsQueryDslRepository.findBeadCrafts(null, pageable, null);
+    public Page<BeadCraftView> beadCrafts(Pageable pageable, BeadCraftCategory category) {
+        return beadsQueryDslRepository.findBeadCrafts(null, pageable, category);
     }
 
     public Page<BeadCraftView> beadCrafts(String username, BeadCraftCategory category, Pageable pageable) {
