@@ -1,5 +1,6 @@
 package com.rumor.yumback.domains.diets.presentation;
 
+import com.rumor.yumback.common.errors.CheckAuthentication;
 import com.rumor.yumback.domains.diets.application.DietService;
 import com.rumor.yumback.domains.diets.domain.Diet;
 import com.rumor.yumback.domains.diets.presentation.request.DietRegisterRequest;
@@ -21,6 +22,7 @@ public class DietController {
     private final DietService dietService;
 
     @GetMapping
+    @CheckAuthentication
     public List<DietView> diets(@AuthenticationPrincipal CustomOauth2User customOauth2User) {
         return dietService.diets(customOauth2User.getUsername()).stream()
                 .map(DietView::of)
@@ -28,6 +30,7 @@ public class DietController {
     }
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @CheckAuthentication
     public DietView register(@AuthenticationPrincipal CustomOauth2User customOauth2User, @RequestPart DietRegisterRequest dietRegisterRequest, @RequestPart MultipartFile file) throws IOException {
         Diet diet = dietService.register(customOauth2User.getUsername(), dietRegisterRequest, file);
         return DietView.of(diet);
