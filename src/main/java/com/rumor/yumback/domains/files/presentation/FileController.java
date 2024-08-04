@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 @RestController
@@ -33,7 +34,7 @@ public class FileController {
     }
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<String> store(@RequestPart MultipartFile file) throws MalformedURLException {
+    public ResponseEntity<String> store(@RequestPart MultipartFile file) throws MalformedURLException, URISyntaxException {
         Path savedFile = fileSystemStorageService.store(file);
         String uriString = fileSystemStorageService.loadAsUrl(savedFile);
 
