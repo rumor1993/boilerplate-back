@@ -33,8 +33,7 @@ public class FileController {
     }
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    @CheckAuthentication
-    public ResponseEntity<String> store(@AuthenticationPrincipal CustomOauth2User customOauth2User, @RequestPart MultipartFile file) throws MalformedURLException {
+    public ResponseEntity<String> store(@RequestPart MultipartFile file) throws MalformedURLException {
         Path savedFile = fileSystemStorageService.store(file);
         String uriString = fileSystemStorageService.loadAsUrl(savedFile);
 
