@@ -15,6 +15,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,8 +77,8 @@ public class FileSystemStorageService {
     }
 
     // properties 에서 받아서 요청주소 처리 필요
-    public String loadAsUrl(Path savedFile) {
-        return Paths.get(resourcesProperties.getUrl())
+    public String loadAsUrl(Path savedFile) throws URISyntaxException {
+        return Paths.get(new URI(resourcesProperties.getUrl()))
                 .resolve("files/")
                 .resolve(savedFile.getFileName().toString())
                 .toString();
