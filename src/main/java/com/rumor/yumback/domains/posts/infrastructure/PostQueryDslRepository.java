@@ -2,13 +2,17 @@ package com.rumor.yumback.domains.posts.infrastructure;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rumor.yumback.domains.comments.domain.Comment;
-import com.rumor.yumback.domains.comments.domain.QComment;
 import com.rumor.yumback.domains.posts.application.PostDto;
-import com.rumor.yumback.domains.posts.application.QPostDto;
+import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
+import com.rumor.yumback.domains.posts.presentation.view.PostView;
 import com.rumor.yumback.domains.users.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,35 +28,86 @@ import static com.rumor.yumback.domains.users.domain.QUser.user;
 public class PostQueryDslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public PostDto posts(User loginUser, UUID id) {
-        Long likesCount = jpaQueryFactory
-                .select(postLikes.id.count())
-                .from(postLikes)
-                .where(postLikes.id.eq(id))
-                .fetchOne();
-
+    public PostDetailView post(User loginUser, UUID postId) {
         return jpaQueryFactory
-                .select(Projections.constructor(PostDto.class,
+                .select(Projections.constructor(PostDetailView.class,
                         post.id,
                         post.title,
                         post.category,
-                        post.description,
                         post.contents,
-                        post.creator,
+                        user.name.as("username"),
                         post.viewCount,
-                        Expressions.asNumber(likesCount == null ? 0 : likesCount).as("likesCount"),
+                        comment.id.countDistinct().as("commentCount"),
+                        postLikes.id.countDistinct().as("likeCount"),
                         Expressions.cases()
                                 .when(postLikes.user.eq(loginUser)).then(true)
                                 .otherwise(false).as("isLiked"),
-                        Projections.list(Projections.constructor(Comment.class,
-                                comment.id, comment.contents, comment.post, comment.creator, comment.createdAt, comment.updatedAt)),
                         post.createdAt,
                         post.updatedAt
-                )).from(post)
-                .leftJoin(postLikes).on(post.id.eq(postLikes.id))
-                .leftJoin(comment).on(comment.post.id.eq(post.id))
-                .innerJoin(user).on(post.creator.id.eq(user.id))
-                .where(post.id.eq(id))
+                ))
+                .from(post)
+                .innerJoin(post.creator, user)
+                .leftJoin(postLikes).on(post.id.eq(postLikes.post.id))
+                .leftJoin(comment).on(post.id.eq(comment.post.id))
+                .groupBy(post.id, post.title, post.category, user.name, postLikes.user, post.createdAt, post.updatedAt)
+                .where(post.id.eq(postId))
                 .fetchOne();
+    }
+
+    public Page<PostView> posts(Pageable pageable) {
+        JPAQuery<Long> count = jpaQueryFactory
+                .select(post.id.countDistinct())
+                .from(post)
+                .innerJoin(post.creator, user)
+                .leftJoin(postLikes).on(post.id.eq(postLikes.post.id))
+                .leftJoin(comment).on(post.id.eq(comment.post.id));
+
+        List<PostView> posts = jpaQueryFactory
+                .select(Projections.constructor(PostView.class,
+                        post.id,
+                        post.title,
+                        post.category,
+                        post.contents,
+                        user.name.as("username"),
+                        post.viewCount,
+                        comment.id.countDistinct().as("commentCount"),
+                        postLikes.id.countDistinct().as("likeCount"),
+                        post.createdAt,
+                        post.updatedAt
+                ))
+                .from(post)
+                .innerJoin(post.creator, user)
+                .leftJoin(postLikes).on(post.id.eq(postLikes.post.id))
+                .leftJoin(comment).on(post.id.eq(comment.post.id))
+                .groupBy(post.id, post.title, post.category, post.description, user.name, post.createdAt, post.updatedAt)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(posts, pageable, count::fetchOne);
+    }
+
+    public List<PostView> populars3() {
+        return jpaQueryFactory
+                .select(Projections.constructor(PostView.class,
+                        post.id,
+                        post.title,
+                        post.category,
+                        post.contents,
+                        user.name.as("username"),
+                        post.viewCount,
+                        comment.id.countDistinct().as("commentCount"),
+                        postLikes.id.countDistinct().as("likeCount"),
+                        post.createdAt,
+                        post.updatedAt
+                ))
+                .from(post)
+                .innerJoin(post.creator, user)
+                .leftJoin(postLikes).on(post.id.eq(postLikes.post.id))
+                .leftJoin(comment).on(post.id.eq(comment.post.id))
+                .groupBy(post.id, post.title, post.category, user.name, post.createdAt, post.updatedAt)
+                .orderBy(postLikes.id.countDistinct().desc().nullsLast()) // Ordering by likeCount
+                .limit(3)
+                .fetch();
     }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Post extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String title;
+    @Enumerated(EnumType.STRING)
     private PostCategory category;
     private String description;
     @Column(columnDefinition = "TEXT")
@@ -36,6 +38,7 @@ public class Post extends AuditableEntity {
     @OneToMany(mappedBy = "post")
     @OrderBy("createdAt asc")
     private List<Comment> comments = new ArrayList<>();
+
 
     public Post(String title, PostCategory category, String description, String contents, User creator) {
         this.title = title;

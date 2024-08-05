@@ -1,9 +1,16 @@
 package com.rumor.yumback.enumeration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PostCategory {
-    KOREAN, CHINESE, JAPANESE, WESTERN, ARTICLE, POST, HOME;
+    CHAT("잡담"), CRAFTS("완성작품"), MARKET("마켓");
+
+    final private String name;
+
+    PostCategory(String name) {
+        this.name = name;
+    }
 
     @JsonCreator
     public static PostCategory fromString(String key) {
@@ -13,5 +20,10 @@ public enum PostCategory {
             }
         }
         return null;
+    }
+
+    @JsonValue
+    public String getName() {
+        return this.name;
     }
 }

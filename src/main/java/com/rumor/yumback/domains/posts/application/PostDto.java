@@ -7,7 +7,6 @@ import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.enumeration.PostCategory;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

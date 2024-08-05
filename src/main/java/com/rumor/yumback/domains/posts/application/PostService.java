@@ -5,6 +5,8 @@ import com.rumor.yumback.domains.posts.domain.PostLikes;
 import com.rumor.yumback.domains.posts.infrastructure.PostJpaRepository;
 import com.rumor.yumback.domains.posts.infrastructure.PostLikeJpaRepository;
 import com.rumor.yumback.domains.posts.infrastructure.PostQueryDslRepository;
+import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
+import com.rumor.yumback.domains.posts.presentation.view.PostView;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
 import jakarta.transaction.Transactional;
@@ -22,32 +24,33 @@ import java.util.UUID;
 public class PostService {
     private final PostJpaRepository postJpaRepository;
     private final PostLikeJpaRepository postLikeJpaRepository;
+    private final PostQueryDslRepository postQueryDslRepository;
     private final UserJpaRepository userJpaRepository;
 
-    public Page<Post> posts(Pageable pageable) {
-        return postJpaRepository.findAll(pageable);
+    public CommunityView community(Pageable pageable) {
+        List<PostView> populars = postQueryDslRepository.populars3();
+        Page<PostView> posts = postQueryDslRepository.posts(pageable);
+        return new CommunityView(populars, posts);
     }
 
     public Post register(PostRegisterDto postRegisterDto, String username) {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
-        Post post = new Post(postRegisterDto.title(), postRegisterDto.category(), postRegisterDto.description(), postRegisterDto.contents(), foundUser);
+        Post post = new Post(postRegisterDto.title(), postRegisterDto.category(), "", postRegisterDto.contents(), foundUser);
         return postJpaRepository.save(post);
     }
 
-    public PostDto post(UUID id, String username) {
+    public PostDetailView post(UUID id, String username) {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
         Post foundPost = postJpaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("not found post"));
 
-        List<PostLikes> likes = postLikeJpaRepository.findAllByPost(foundPost);
-        Boolean isLiked = postLikeJpaRepository.findByPostAndUser(foundPost, foundUser).isPresent();
-
         foundPost.increaseViewCount();
-        return PostDto.of(foundPost, (long) likes.size(), isLiked);
+
+        return postQueryDslRepository.post(foundUser, id);
     }
 
     public String likes(UUID id, String username) {
