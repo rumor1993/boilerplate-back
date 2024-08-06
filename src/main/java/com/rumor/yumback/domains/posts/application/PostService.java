@@ -29,7 +29,6 @@ public class PostService {
     private final PostLikeJpaRepository postLikeJpaRepository;
     private final PostQueryDslRepository postQueryDslRepository;
     private final UserJpaRepository userJpaRepository;
-    private final CommentService commentService;
 
     public CommunityView community(Pageable pageable) {
         List<PostView> populars = postQueryDslRepository.populars3();

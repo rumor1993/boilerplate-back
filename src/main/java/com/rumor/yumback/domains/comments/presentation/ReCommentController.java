@@ -17,26 +17,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/recomments")
 @RequiredArgsConstructor
-public class CommentController {
+public class ReCommentController {
     private final CommentService commentService;
-
-    @PostMapping
-    public CommentView register(@Valid @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal CustomOauth2User customOauth2User) {
-        Comment savedComment = commentService.register(commentRequest.toDto(), customOauth2User.getUsername());
-        return new CommentView(savedComment);
-    }
-
-    @PostMapping("/{id}/reply")
-    public ReCommentView reply(@RequestBody CommentRequest commentRequest, @AuthenticationPrincipal CustomOauth2User customOauth2User, @PathVariable UUID id) {
-        ReComment savedComment = commentService.reply(id ,commentRequest.toDto(), customOauth2User.getUsername());
-        return new ReCommentView(savedComment);
-    }
 
     @PostMapping("/{id}/likes")
     public SuccessResponse likes(@AuthenticationPrincipal CustomOauth2User customOauth2User, @PathVariable UUID id) {
-        String message = commentService.likes(customOauth2User.getUsername(), id);
+        String message = commentService.reCommentLikes(customOauth2User.getUsername(), id);
         return new SuccessResponse(HttpStatus.CREATED, message);
     }
 }
