@@ -15,6 +15,7 @@ public class ReCommentView {
     private final UUID commentId;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final Boolean isReComment = true;
 
     public ReCommentView(ReComment reComment) {
         this.id = reComment.getId();

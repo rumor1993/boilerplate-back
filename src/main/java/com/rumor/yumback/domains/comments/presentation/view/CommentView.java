@@ -18,6 +18,7 @@ public class CommentView {
     private final List<ReCommentView> reply;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final Boolean isReComment = false;
 
     @QueryProjection
     public CommentView(Comment savedComment) {
@@ -30,5 +31,13 @@ public class CommentView {
         this.reply = savedComment.getReComments().stream()
                 .map(ReCommentView::new)
                 .toList();
+    }
+
+    public Integer getLikeCount() {
+        return 0;
+    }
+
+    public Integer getCommentCount() {
+        return reply.size();
     }
 }

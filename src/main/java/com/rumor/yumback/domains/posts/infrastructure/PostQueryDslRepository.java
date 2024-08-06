@@ -4,9 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.rumor.yumback.domains.comments.domain.Comment;
-import com.rumor.yumback.domains.posts.application.PostDto;
-import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
+import com.rumor.yumback.domains.posts.application.PostDetailDto;
 import com.rumor.yumback.domains.posts.presentation.view.PostView;
 import com.rumor.yumback.domains.users.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +26,9 @@ import static com.rumor.yumback.domains.users.domain.QUser.user;
 public class PostQueryDslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public PostDetailView post(User loginUser, UUID postId) {
+    public PostDetailDto post(User loginUser, UUID postId) {
         return jpaQueryFactory
-                .select(Projections.constructor(PostDetailView.class,
+                .select(Projections.constructor(PostDetailDto.class,
                         post.id,
                         post.title,
                         post.category,
@@ -80,6 +78,7 @@ public class PostQueryDslRepository {
                 .leftJoin(postLikes).on(post.id.eq(postLikes.post.id))
                 .leftJoin(comment).on(post.id.eq(comment.post.id))
                 .groupBy(post.id, post.title, post.category, post.description, user.name, post.createdAt, post.updatedAt)
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
