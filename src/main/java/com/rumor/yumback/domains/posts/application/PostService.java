@@ -32,7 +32,7 @@ public class PostService {
         Page<PostDto> popular = postJpaRepository.findAll(PageRequest.of(0, 3, Sort.by("likeCount").descending()))
                 .map(PostDto::from);
 
-        List<PostDto> posts = postJpaRepository.findAll().stream()
+        List<PostDto> posts = postJpaRepository.findAll(Sort.by("createdAt").descending()).stream()
                 .map(PostDto::from)
                 .toList();
 
