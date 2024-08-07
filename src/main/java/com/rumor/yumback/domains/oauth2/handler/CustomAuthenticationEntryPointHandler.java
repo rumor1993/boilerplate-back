@@ -1,5 +1,7 @@
 package com.rumor.yumback.domains.oauth2.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rumor.yumback.common.errors.CustomErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,9 +19,11 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        JSONObject responseJson = new JSONObject();
-        responseJson.put("message", "Unauthorized: Authentication token was either missing or invalid.");
-        responseJson.put("code", HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().println(responseJson);
+
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, "계정 권한을 확인해주세요.");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(customErrorResponse);
+
+        response.getWriter().write(jsonResponse);
     }
 }

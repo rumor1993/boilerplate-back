@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("beadcrafts")
+@RequestMapping("/beadcrafts")
 @RequiredArgsConstructor
 public class BeadCraftController {
     private final BeadCraftService beadCraftService;

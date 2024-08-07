@@ -1,13 +1,11 @@
 package com.rumor.yumback.domains.posts.application;
 
 import com.rumor.yumback.domains.comments.infrastructure.CommentLikeJpaRepository;
-import com.rumor.yumback.domains.comments.presentation.view.CommentView;
 import com.rumor.yumback.domains.posts.domain.Post;
 import com.rumor.yumback.domains.posts.domain.PostLike;
 import com.rumor.yumback.domains.posts.infrastructure.PostJpaRepository;
 import com.rumor.yumback.domains.posts.infrastructure.PostLikeJpaRepository;
 import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
-import com.rumor.yumback.domains.posts.presentation.view.PostView;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
 import jakarta.transaction.Transactional;
