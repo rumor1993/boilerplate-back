@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .successHandler(customOauth2SuccessHandler));
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/beadcrafts","/comments", "/posts", "/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/beadcrafts","/files","/comments", "/posts", "/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated());
 
         http.exceptionHandling(handler -> handler.authenticationEntryPoint(customAuthenticationEntryPointHandler));
