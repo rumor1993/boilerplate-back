@@ -29,7 +29,7 @@ public class PostService {
     private final UserJpaRepository userJpaRepository;
 
     public CommunityDto community(Pageable pageable) {
-        Page<PostDto> popular = postJpaRepository.findAll(PageRequest.of(0, 3, Sort.by("likeCount").descending()))
+        Page<PostDto> popular = postJpaRepository.findAll(PageRequest.of(0, 3, Sort.by("viewCount").descending()))
                 .map(PostDto::from);
 
         List<PostDto> posts = postJpaRepository.findAll(Sort.by("createdAt").descending()).stream()
