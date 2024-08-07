@@ -83,7 +83,7 @@ public class BeadsQueryDslRepository {
                 );
 
         for (Sort.Order order : pageable.getSort()) {
-            if (order.getProperty().equals("likesCount")) {
+            if (order.getProperty().equals("likeCount")) {
                 beadCraftQuery.orderBy(new OrderSpecifier<>(Order.DESC, beadCraftLikes.id.count()));
             }
 

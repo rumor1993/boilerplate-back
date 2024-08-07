@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "posts")
+@Table(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends AuditableEntity {
     @Id
@@ -34,6 +34,10 @@ public class Post extends AuditableEntity {
     private User creator;
     @Column(name="view_count", columnDefinition = "bigint default 0")
     private Long viewCount = 0L;
+    @Column(name="like_count", columnDefinition = "bigint default 0")
+    private Long likeCount = 0L;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "post")
     @OrderBy("createdAt asc")
@@ -51,4 +55,18 @@ public class Post extends AuditableEntity {
     public void increaseViewCount() {
         this.viewCount++;
     }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
+
+    public void deleted() {
+        this.isDeleted = true;
+    }
+
+
 }

@@ -17,6 +17,6 @@ public record DietView(
 ) {
 
     public static DietView of(Diet diet) {
-        return new DietView(diet.getId(), UserView.of(diet.getCreator()), diet.getName(), diet.getPicture(), diet.getCalorie(), diet.getCreatedAt(), diet.getUpdatedAt());
+        return new DietView(diet.getId(), UserView.from(diet.getCreator()), diet.getName(), diet.getPicture(), diet.getCalorie(), diet.getCreatedAt(), diet.getUpdatedAt());
     }
 }

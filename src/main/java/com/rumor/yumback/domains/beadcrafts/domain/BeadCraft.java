@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "beadcrafts")
+@Table(name = "beadcraft")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BeadCraft extends AuditableEntity {
 

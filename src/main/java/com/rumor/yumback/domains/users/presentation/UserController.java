@@ -23,6 +23,6 @@ public class UserController {
     @CheckAuthentication
     public UserView me(@AuthenticationPrincipal CustomOauth2User customOauth2User) {
         User foundUser = userService.profile(customOauth2User.getUsername());
-        return UserView.of(foundUser);
+        return UserView.from(foundUser);
     }
 }

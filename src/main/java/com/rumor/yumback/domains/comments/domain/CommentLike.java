@@ -10,24 +10,24 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "reomment_likes")
+@Table(name = "comment_like")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReCommentLikes {
+public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "recomment_id")
-    private ReComment reComment;
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public ReCommentLikes(ReComment reComment, User user) {
-        this.reComment = reComment;
+    public CommentLike(Comment comment, User user) {
+        this.comment = comment;
         this.user = user;
     }
 }

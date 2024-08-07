@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "post_likes")
+@Table(name = "post_like")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLikes extends AuditableEntity {
+public class PostLike extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -26,7 +26,7 @@ public class PostLikes extends AuditableEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public PostLikes(Post post, User user) {
+    public PostLike(Post post, User user) {
         this.post = post;
         this.user = user;
     }

@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public record CommunityView(
-        Page<PostView> populars,
-        List<PostView> posts
+public record CommunityDto(
+        Page<PostDto> populars,
+        List<PostDto> posts
 ) {
 }

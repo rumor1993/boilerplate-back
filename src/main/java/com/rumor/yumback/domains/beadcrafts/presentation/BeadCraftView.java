@@ -34,6 +34,6 @@ public record BeadCraftView(
     }
 
     public static BeadCraftView of (BeadCraft beadCraft) {
-        return new BeadCraftView(beadCraft.getId(), beadCraft.getName(), beadCraft.getCategory(), beadCraft.getPicture(), UserView.of(beadCraft.getCreator()), null, null, beadCraft.getCreatedAt(), beadCraft.getUpdatedAt());
+        return new BeadCraftView(beadCraft.getId(), beadCraft.getName(), beadCraft.getCategory(), beadCraft.getPicture(), UserView.from(beadCraft.getCreator()), null, null, beadCraft.getCreatedAt(), beadCraft.getUpdatedAt());
     }
 }

@@ -1,12 +1,11 @@
 package com.rumor.yumback.domains.posts.application;
 
-import com.rumor.yumback.domains.comments.application.CommentService;
-import com.rumor.yumback.domains.comments.domain.Comment;
+import com.rumor.yumback.domains.comments.infrastructure.CommentLikeJpaRepository;
+import com.rumor.yumback.domains.comments.presentation.view.CommentView;
 import com.rumor.yumback.domains.posts.domain.Post;
-import com.rumor.yumback.domains.posts.domain.PostLikes;
+import com.rumor.yumback.domains.posts.domain.PostLike;
 import com.rumor.yumback.domains.posts.infrastructure.PostJpaRepository;
 import com.rumor.yumback.domains.posts.infrastructure.PostLikeJpaRepository;
-import com.rumor.yumback.domains.posts.infrastructure.PostQueryDslRepository;
 import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
 import com.rumor.yumback.domains.posts.presentation.view.PostView;
 import com.rumor.yumback.domains.users.domain.User;
@@ -14,11 +13,12 @@ import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,13 +27,18 @@ import java.util.UUID;
 public class PostService {
     private final PostJpaRepository postJpaRepository;
     private final PostLikeJpaRepository postLikeJpaRepository;
-    private final PostQueryDslRepository postQueryDslRepository;
+    private final CommentLikeJpaRepository commentLikeJpaRepository;
     private final UserJpaRepository userJpaRepository;
 
-    public CommunityView community(Pageable pageable) {
-        List<PostView> populars = postQueryDslRepository.populars3();
-        Page<PostView> posts = postQueryDslRepository.posts(pageable);
-        return new CommunityView(populars, posts);
+    public CommunityDto community(Pageable pageable) {
+        Page<PostDto> popular = postJpaRepository.findAll(PageRequest.of(0, 3, Sort.by("likeCount").descending()))
+                .map(PostDto::from);
+
+        List<PostDto> posts = postJpaRepository.findAll().stream()
+                .map(PostDto::from)
+                .toList();
+
+        return new CommunityDto(popular, posts);
     }
 
     public Post register(PostRegisterDto postRegisterDto, String username) {
@@ -48,14 +53,15 @@ public class PostService {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
-        Post foundPost = postJpaRepository.findById(id)
+        Post foundPost = postJpaRepository.findByIdAndCreator(id, foundUser)
                 .orElseThrow(() -> new RuntimeException("not found post"));
 
+        Boolean isLiked = postLikeJpaRepository.findByPostAndUser(foundPost, foundUser).isPresent();
+        PostDetailDto postDetailDto = PostDetailDto.from(foundPost, isLiked);
+
+        // 멱등성, 단일책임 위배
         foundPost.increaseViewCount();
-
-        PostDetailDto postDetailDto = postQueryDslRepository.post(foundUser, id);
-        return PostDetailView.from(postDetailDto, foundPost.getComments());
-
+        return PostDetailView.from(postDetailDto, foundUser);
     }
 
     public String likes(UUID id, String username) {
@@ -66,17 +72,15 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("not found post"));
 
         return postLikeJpaRepository.findByPostAndUser(foundPost, foundUser)
-                .map(postLikes -> {
-                    unlikes(postLikes);
+                .map(postLike -> {
+                    foundPost.decreaseLikeCount();
+                    postLikeJpaRepository.delete(postLike);
                     return "좋아요가 취소되었습니다.";
                 })
                 .orElseGet(() -> {
-                    postLikeJpaRepository.save(new PostLikes(foundPost, foundUser));
+                    foundPost.increaseLikeCount();
+                    postLikeJpaRepository.save(new PostLike(foundPost, foundUser));
                     return "좋아요를 누르셨습니다.";
                 });
-    }
-
-    private void unlikes(PostLikes postLikes) {
-        postLikeJpaRepository.delete(postLikes);
     }
 }

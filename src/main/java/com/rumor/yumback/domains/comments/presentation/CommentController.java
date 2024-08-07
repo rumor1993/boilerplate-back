@@ -3,10 +3,10 @@ package com.rumor.yumback.domains.comments.presentation;
 import com.rumor.yumback.common.SuccessResponse;
 import com.rumor.yumback.domains.comments.application.CommentService;
 import com.rumor.yumback.domains.comments.domain.Comment;
-import com.rumor.yumback.domains.comments.domain.ReComment;
+import com.rumor.yumback.domains.comments.domain.Reply;
 import com.rumor.yumback.domains.comments.presentation.request.CommentRequest;
 import com.rumor.yumback.domains.comments.presentation.view.CommentView;
-import com.rumor.yumback.domains.comments.presentation.view.ReCommentView;
+import com.rumor.yumback.domains.comments.presentation.view.ReplyView;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +29,9 @@ public class CommentController {
     }
 
     @PostMapping("/{id}/reply")
-    public ReCommentView reply(@RequestBody CommentRequest commentRequest, @AuthenticationPrincipal CustomOauth2User customOauth2User, @PathVariable UUID id) {
-        ReComment savedComment = commentService.reply(id ,commentRequest.toDto(), customOauth2User.getUsername());
-        return new ReCommentView(savedComment);
+    public ReplyView reply(@RequestBody CommentRequest commentRequest, @AuthenticationPrincipal CustomOauth2User customOauth2User, @PathVariable UUID id) {
+        Reply savedComment = commentService.reply(id ,commentRequest.toDto(), customOauth2User.getUsername());
+        return new ReplyView(savedComment);
     }
 
     @PostMapping("/{id}/likes")

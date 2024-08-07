@@ -30,7 +30,7 @@ public record UserView(
         this.updatedAt = updatedAt;
     }
 
-    public static UserView of(User foundUser) {
+    public static UserView from(User foundUser) {
         return new UserView(foundUser.getId(), foundUser.getUsername(), foundUser.getName(), foundUser.getEmail(), foundUser.getPicture(), foundUser.getRole(), foundUser.getCreatedAt(), foundUser.getUpdatedAt());
     }
 }

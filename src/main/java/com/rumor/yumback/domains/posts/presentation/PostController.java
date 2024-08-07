@@ -2,10 +2,12 @@ package com.rumor.yumback.domains.posts.presentation;
 
 import com.rumor.yumback.common.SuccessResponse;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
+import com.rumor.yumback.domains.posts.application.CommunityDto;
 import com.rumor.yumback.domains.posts.application.CommunityView;
 import com.rumor.yumback.domains.posts.application.PostService;
 import com.rumor.yumback.domains.posts.presentation.request.PostRequest;
 import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
+import com.rumor.yumback.domains.posts.presentation.view.PostView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,15 @@ public class PostController {
 
     @GetMapping
     public CommunityView community(Pageable pageable) {
-        return postService.community(pageable);
+        CommunityDto communityDto = postService.community(pageable);
+
+        return new CommunityView(
+                communityDto.populars()
+                        .map(PostView::from),
+                communityDto.posts().stream()
+                        .map(PostView::from)
+                        .toList()
+        );
     }
 
     @GetMapping("/{id}")

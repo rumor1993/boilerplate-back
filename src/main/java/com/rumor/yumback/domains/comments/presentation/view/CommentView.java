@@ -1,7 +1,7 @@
 package com.rumor.yumback.domains.comments.presentation.view;
 
-import com.querydsl.core.annotations.QueryProjection;
 import com.rumor.yumback.domains.comments.domain.Comment;
+import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.presentation.view.UserView;
 import lombok.Getter;
 
@@ -15,29 +15,42 @@ public class CommentView {
     private final String contents;
     private final UserView creator;
     private final UUID postId;
-    private final List<ReCommentView> reply;
+    private final List<ReplyView> replies;
+    private final List<CommentLikeView> likes;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private final Boolean isReComment = false;
+    private final Boolean isReply = false;
+    private Boolean isLiked = false;
 
-    @QueryProjection
-    public CommentView(Comment savedComment) {
-        this.id = savedComment.getId();
-        this.contents = savedComment.getContents();
-        this.creator = UserView.of(savedComment.getCreator());
-        this.postId = savedComment.getPost().getId();
-        this.createdAt = savedComment.getCreatedAt();
-        this.updatedAt = savedComment.getUpdatedAt();
-        this.reply = savedComment.getReComments().stream()
-                .map(ReCommentView::new)
+    public CommentView(Comment comment) {
+        this(comment, null);
+    }
+
+    public CommentView(Comment comment, User loginUser) {
+        this.id = comment.getId();
+        this.contents = comment.getContents();
+        this.creator = UserView.from(comment.getCreator());
+        this.postId = comment.getPost().getId();
+        this.likes = comment.getLikes().stream()
+                .map(CommentLikeView::from)
                 .toList();
+        this.createdAt = comment.getCreatedAt();
+        this.updatedAt = comment.getUpdatedAt();
+        this.replies = comment.getReplies().stream()
+                .map(reply -> new ReplyView(reply, loginUser))
+                .toList();
+
+        if (loginUser != null) {
+            this.isLiked = this.likes.stream()
+                    .anyMatch(like -> loginUser.getId().equals(like.userView().id()));
+        }
     }
 
-    public Integer getLikeCount() {
-        return 0;
+    public Long getLikeCount() {
+        return 0L;
     }
 
-    public Integer getCommentCount() {
-        return reply.size();
+    public Long getRepliesCount() {
+        return (long) replies.size();
     }
 }

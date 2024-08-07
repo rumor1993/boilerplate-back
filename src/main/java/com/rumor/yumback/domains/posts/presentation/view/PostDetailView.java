@@ -1,8 +1,9 @@
 package com.rumor.yumback.domains.posts.presentation.view;
 
-import com.rumor.yumback.domains.comments.domain.Comment;
 import com.rumor.yumback.domains.comments.presentation.view.CommentView;
 import com.rumor.yumback.domains.posts.application.PostDetailDto;
+import com.rumor.yumback.domains.users.domain.User;
+import com.rumor.yumback.domains.users.presentation.view.UserView;
 import com.rumor.yumback.enumeration.PostCategory;
 
 import java.time.LocalDateTime;
@@ -14,33 +15,46 @@ public record PostDetailView(
         String title,
         PostCategory category,
         String contents,
-        String username,
+        UserView creator,
         Long viewCount,
-        Long commentCount,
         Long likeCount,
         Boolean isLiked,
+        List<CommentView> comments,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        List<CommentView> comments
+        LocalDateTime updatedAt
 ) {
 
-    public static PostDetailView from(PostDetailDto postDetailDto, List<Comment> contents) {
+    public static PostDetailView from(PostDetailDto postDetailDto) {
+        return PostDetailView.from(postDetailDto, null);
+    }
+
+    public static PostDetailView from(PostDetailDto postDetailDto, User loginUser) {
         return new PostDetailView(
                 postDetailDto.id(),
                 postDetailDto.title(),
                 postDetailDto.category(),
                 postDetailDto.contents(),
-                postDetailDto.username(),
+                UserView.from(postDetailDto.creator()),
                 postDetailDto.viewCount(),
-                postDetailDto.commentCount(),
                 postDetailDto.likeCount(),
                 postDetailDto.isLiked(),
+                postDetailDto.comments().stream()
+                        .map(comment -> new CommentView(comment, loginUser))
+                        .toList(),
                 postDetailDto.createdAt(),
-                postDetailDto.updatedAt(),
-                contents.stream()
-                        .map(CommentView::new)
-                        .toList()
+                postDetailDto.updatedAt()
         );
+    }
+
+    public Long getCommentCount() {
+        Long totalCount = 0L;
+
+        for (CommentView comment : comments) {
+            totalCount++;
+            totalCount += comment.getRepliesCount();
+        }
+
+        return totalCount;
     }
 }
 

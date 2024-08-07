@@ -20,16 +20,23 @@ public class Comment extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private String contents;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User creator;
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @OneToMany(mappedBy = "comment")
+    private List<CommentLike> likes = new ArrayList<>();
+
     @OneToMany(mappedBy = "comment")
     @OrderBy("createdAt asc ")
-    private List<ReComment> reComments = new ArrayList<>();
+    private List<Reply> replies = new ArrayList<>();
 
     public Comment(String contents, User creator, Post post) {
         this.contents = contents;

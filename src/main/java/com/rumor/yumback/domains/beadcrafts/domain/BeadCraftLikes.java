@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "beadcrafts_likes")
+@Table(name = "beadcrafts_like")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BeadCraftLikes extends AuditableEntity {
@@ -19,7 +19,7 @@ public class BeadCraftLikes extends AuditableEntity {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "beadcrafts_id")
+    @JoinColumn(name = "beadcraft_id")
     private BeadCraft beadCraft;
 
     @ManyToOne
