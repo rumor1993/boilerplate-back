@@ -1,8 +1,8 @@
-package com.rumor.yumback.domains.beadcrafts.application;
+package com.rumor.yumback.domains.beadsCrafts.application;
 
 import java.time.LocalDateTime;
 
-public interface BeadCraftDto {
+public interface BeadsCraftDto {
     byte[] getBeadCraftId();
     String getBeadCraftName();
     String getBeadCraftCategory();

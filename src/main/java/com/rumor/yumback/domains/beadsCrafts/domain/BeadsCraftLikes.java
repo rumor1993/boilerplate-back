@@ -1,4 +1,4 @@
-package com.rumor.yumback.domains.beadcrafts.domain;
+package com.rumor.yumback.domains.beadsCrafts.domain;
 
 import com.rumor.yumback.common.AuditableEntity;
 import com.rumor.yumback.domains.users.domain.User;
@@ -10,24 +10,24 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "beadcrafts_like")
+@Table(name = "beads_craft_like")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BeadCraftLikes extends AuditableEntity {
+public class BeadsCraftLikes extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "beadcraft_id")
-    private BeadCraft beadCraft;
+    @JoinColumn(name = "beads_craft_id")
+    private BeadsCraft beadsCraft;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public BeadCraftLikes(BeadCraft beadCraft, User user) {
-        this.beadCraft = beadCraft;
+    public BeadsCraftLikes(BeadsCraft beadsCraft, User user) {
+        this.beadsCraft = beadsCraft;
         this.user = user;
     }
 }

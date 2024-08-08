@@ -1,4 +1,4 @@
-package com.rumor.yumback.domains.beadcrafts.domain;
+package com.rumor.yumback.domains.beadsCrafts.domain;
 
 import com.rumor.yumback.common.AuditableEntity;
 import com.rumor.yumback.domains.users.domain.User;
@@ -8,13 +8,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "beadcraft")
+@Table(name = "beads_craft")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BeadCraft extends AuditableEntity {
+public class BeadsCraft extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID )
@@ -31,10 +33,24 @@ public class BeadCraft extends AuditableEntity {
     @JoinColumn(name = "user_id")
     private User creator;
 
-    public BeadCraft(String name, BeadCraftCategory category, String picture, User foundUser) {
+    @OneToMany(mappedBy = "beadsCraft")
+    private List<BeadsCraftLikes> likes = new ArrayList<>();
+
+    @Column(name = "like_count", columnDefinition = "bigint default 0")
+    private Long likeCount = 0L;
+
+    public BeadsCraft(String name, BeadCraftCategory category, String picture, User foundUser) {
         this.name = name;
         this.category = category;
         this.picture = picture;
         this.creator = foundUser;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
     }
 }

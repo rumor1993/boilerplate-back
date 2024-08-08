@@ -1,7 +1,7 @@
-package com.rumor.yumback.domains.beadcrafts.infrastructure;
+package com.rumor.yumback.domains.beadsCrafts.infrastructure;
 
-import com.rumor.yumback.domains.beadcrafts.application.BeadCraftDto;
-import com.rumor.yumback.domains.beadcrafts.domain.BeadCraft;
+import com.rumor.yumback.domains.beadsCrafts.application.BeadsCraftDto;
+import com.rumor.yumback.domains.beadsCrafts.domain.BeadsCraft;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.UUID;
 
-public interface BeadCraftJpaRepository extends org.springframework.data.jpa.repository.JpaRepository<BeadCraft, UUID> {
+public interface BeadsCraftJpaRepository extends org.springframework.data.jpa.repository.JpaRepository<BeadsCraft, UUID> {
 
     @Query(value = "SELECT " +
             "b.id AS beadCraftId, " +
@@ -29,5 +29,5 @@ public interface BeadCraftJpaRepository extends org.springframework.data.jpa.rep
                     "LEFT JOIN beadcrafts_likes bl ON b.id = bl.beadcrafts_id " +
                     "INNER JOIN users u ON b.user_id = u.id",
             nativeQuery = true)
-    Page<BeadCraftDto> findBeadCraftsWithDetailsAndLikes(@Param("userId") UUID userId, Pageable pageable);
+    Page<BeadsCraftDto> findBeadCraftsWithDetailsAndLikes(@Param("userId") UUID userId, Pageable pageable);
 }
