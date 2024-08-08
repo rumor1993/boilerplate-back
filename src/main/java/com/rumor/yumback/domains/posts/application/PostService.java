@@ -51,7 +51,7 @@ public class PostService {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
-        Post foundPost = postJpaRepository.findByIdAndCreator(id, foundUser)
+        Post foundPost = postJpaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("not found post"));
 
         Boolean isLiked = postLikeJpaRepository.findByPostAndUser(foundPost, foundUser).isPresent();
