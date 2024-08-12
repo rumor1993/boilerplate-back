@@ -23,7 +23,7 @@ public class FileController {
     private final FileSystemStorageService fileSystemStorageService;
 
     @GetMapping("/{folderName}/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, @PathVariable String folderName) throws MalformedURLException {
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename, @PathVariable(required = false) String folderName) throws MalformedURLException {
         Resource file = fileSystemStorageService.loadAsResource(filename, folderName);
 
         if (file == null) {
