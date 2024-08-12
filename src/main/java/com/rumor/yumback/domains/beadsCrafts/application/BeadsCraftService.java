@@ -26,7 +26,7 @@ public class BeadsCraftService {
     private final BeadsCraftLikesJpaRepository beadsCraftLikesJpaRepository;
     private final FileSystemStorageService fileSystemStorageService;
 
-    public BeadsCraft addBeadCraft(String username, BeadsCraftRegisterDto beadsCraftRegisterDto) throws URISyntaxException, IOException {
+    public BeadsCraft addBeadsCraft(String username, BeadsCraftRegisterDto beadsCraftRegisterDto) throws URISyntaxException, IOException {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 

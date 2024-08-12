@@ -1,7 +1,6 @@
 package com.rumor.yumback.domains.beadsCrafts.presentation;
 
 import com.rumor.yumback.common.SuccessResponse;
-import com.rumor.yumback.common.errors.CheckAuthentication;
 import com.rumor.yumback.domains.beadsCrafts.application.BeadsCraftRegisterDto;
 import com.rumor.yumback.domains.beadsCrafts.application.BeadsCraftService;
 import com.rumor.yumback.domains.beadsCrafts.domain.BeadsCraft;
@@ -25,7 +24,7 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/beadcrafts")
+@RequestMapping("/beads-crafts")
 @RequiredArgsConstructor
 public class BeadsCraftController {
     private final BeadsCraftService beadsCraftService;
@@ -40,14 +39,12 @@ public class BeadsCraftController {
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @CheckAuthentication
     public BeadsCraftView addBeadCraft(@AuthenticationPrincipal CustomOauth2User customOauth2User, @Valid @RequestPart BeadsCraftRequest beadsCraftRequest, @RequestPart("file") MultipartFile file) throws URISyntaxException, IOException {
-        BeadsCraft beadsCraft = beadsCraftService.addBeadCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.category(), file));
+        BeadsCraft beadsCraft = beadsCraftService.addBeadsCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.category(), file));
         return BeadsCraftView.from(beadsCraft);
     }
 
     @PostMapping("/{id}/likes")
-    @CheckAuthentication
     public ResponseEntity<SuccessResponse> likes(@AuthenticationPrincipal CustomOauth2User customOauth2User, @PathVariable UUID id) {
         String likesMessage = beadsCraftService.likes(id, customOauth2User.getUsername());
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.CREATED, likesMessage));

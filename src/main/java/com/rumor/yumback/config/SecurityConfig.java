@@ -37,7 +37,7 @@ public class SecurityConfig {
 
                     CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://rumor-lab.com"));
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://beads-love.com"));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .successHandler(customOauth2SuccessHandler));
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/beadcrafts", "/files","/files/**","/comments", "/posts", "/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/beads-crafts", "/files","/files/**","/comments", "/posts", "/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated());
 
         http.exceptionHandling(handler -> handler.authenticationEntryPoint(customAuthenticationEntryPointHandler));
