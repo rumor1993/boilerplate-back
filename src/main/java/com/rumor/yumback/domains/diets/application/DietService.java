@@ -40,7 +40,7 @@ public class DietService {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
-        Path filePath = fileSystemStorageService.store(file);
+        Path filePath = fileSystemStorageService.store(file, username);
 
         FoodDto foodDto = analyzingImages(filePath);
         return dietJpaRepository.save(new Diet(foundUser, foodDto.name(), file.getOriginalFilename(), foodDto.calorie()));

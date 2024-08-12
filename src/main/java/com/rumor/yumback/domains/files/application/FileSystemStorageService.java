@@ -14,11 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
@@ -30,19 +28,20 @@ public class FileSystemStorageService {
     private final UserJpaRepository userJpaRepository;
     private final ResourcesProperties resourcesProperties;
 
-    public Path store(MultipartFile file) {
+    public Path store(MultipartFile file, String folderName) throws IOException {
         if (file.isEmpty()) {
             throw new RuntimeException("Failed to store empty file.");
         }
 
         String fileExtension = com.google.common.io.Files.getFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
         Path rootLocation = filesProperties.getRootLocation();
-        Path destinationFile = rootLocation.resolve(UUID.randomUUID() + "." + fileExtension)
+        Path destinationFile = rootLocation.resolve(folderName)
+                .resolve(UUID.randomUUID() + "." + fileExtension)
                 .normalize()
                 .toAbsolutePath();
 
-        if (!destinationFile.getParent().equals(rootLocation.toAbsolutePath())) {
-            throw new StorageException("Cannot store file outside current directory.");
+        if (!Files.exists(destinationFile)) {
+            Files.createDirectories(destinationFile);
         }
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -55,9 +54,9 @@ public class FileSystemStorageService {
         }
     }
 
-    public Resource loadAsResource(String filename) throws MalformedURLException {
+    public Resource loadAsResource(String filename, String folderName) throws MalformedURLException {
         try {
-            Path file = this.load(filename);
+            Path file = this.load(folderName + "/" + filename);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -76,11 +75,7 @@ public class FileSystemStorageService {
     }
 
     // properties 에서 받아서 요청주소 처리 필요
-    public String loadAsUrl(Path savedFile) throws URISyntaxException {
-        return Paths.get(new URI(resourcesProperties.getUrl()))
-                .resolve("files/")
-                .resolve(savedFile.getFileName().toString())
-                .toString();
-
+    public String loadAsUrl(Path savedFile, String folderName) {
+        return resourcesProperties.getUrl() + "/files/" + folderName + "/" + savedFile.getFileName();
     }
 }

@@ -1,6 +1,5 @@
 package com.rumor.yumback.domains.files.presentation;
 
-import com.rumor.yumback.common.errors.CheckAuthentication;
 import com.rumor.yumback.domains.files.application.FileSystemStorageService;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -22,9 +22,9 @@ import java.nio.file.Path;
 public class FileController {
     private final FileSystemStorageService fileSystemStorageService;
 
-    @GetMapping("/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) throws MalformedURLException {
-        Resource file = fileSystemStorageService.loadAsResource(filename);
+    @GetMapping("/{folderName}/{filename:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename, @PathVariable String folderName) throws MalformedURLException {
+        Resource file = fileSystemStorageService.loadAsResource(filename, folderName);
 
         if (file == null) {
             return ResponseEntity.notFound().build();
@@ -34,9 +34,9 @@ public class FileController {
     }
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<String> store(@RequestPart MultipartFile file) throws MalformedURLException, URISyntaxException {
-        Path savedFile = fileSystemStorageService.store(file);
-        String uriString = fileSystemStorageService.loadAsUrl(savedFile);
+    public ResponseEntity<String> store(@AuthenticationPrincipal CustomOauth2User customOauth2User, @RequestPart MultipartFile file) throws URISyntaxException, IOException {
+        Path savedFile = fileSystemStorageService.store(file, customOauth2User.getUsername());
+        String uriString = fileSystemStorageService.loadAsUrl(savedFile, customOauth2User.getUsername());
 
         return ResponseEntity.ok().body(uriString);
     }

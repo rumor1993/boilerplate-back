@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class BeadsCraftController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @CheckAuthentication
-    public BeadsCraftView addBeadCraft(@AuthenticationPrincipal CustomOauth2User customOauth2User, @Valid @RequestPart BeadsCraftRequest beadsCraftRequest, @RequestPart("file") MultipartFile file) throws URISyntaxException {
+    public BeadsCraftView addBeadCraft(@AuthenticationPrincipal CustomOauth2User customOauth2User, @Valid @RequestPart BeadsCraftRequest beadsCraftRequest, @RequestPart("file") MultipartFile file) throws URISyntaxException, IOException {
         BeadsCraft beadsCraft = beadsCraftService.addBeadCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.category(), file));
         return BeadsCraftView.from(beadsCraft);
     }

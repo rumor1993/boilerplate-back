@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -25,12 +26,12 @@ public class BeadsCraftService {
     private final BeadsCraftLikesJpaRepository beadsCraftLikesJpaRepository;
     private final FileSystemStorageService fileSystemStorageService;
 
-    public BeadsCraft addBeadCraft(String username, BeadsCraftRegisterDto beadsCraftRegisterDto) throws URISyntaxException {
+    public BeadsCraft addBeadCraft(String username, BeadsCraftRegisterDto beadsCraftRegisterDto) throws URISyntaxException, IOException {
         User foundUser = userJpaRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
-        Path savedFile = fileSystemStorageService.store(beadsCraftRegisterDto.file());
-        String uriString = fileSystemStorageService.loadAsUrl(savedFile);
+        Path savedFile = fileSystemStorageService.store(beadsCraftRegisterDto.file(), username);
+        String uriString = fileSystemStorageService.loadAsUrl(savedFile, username);
 
         BeadsCraft beadsCraft = new BeadsCraft(beadsCraftRegisterDto.name(), beadsCraftRegisterDto.category(), uriString, foundUser);
         return beadsCraftJpaRepository.save(beadsCraft);
