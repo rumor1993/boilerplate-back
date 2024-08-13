@@ -5,6 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record BeadsCraftRegisterDto(
         String name,
+        String link,
+        String description,
         BeadCraftCategory category,
         MultipartFile file
 ) {

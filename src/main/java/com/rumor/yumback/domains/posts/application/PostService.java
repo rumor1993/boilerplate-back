@@ -8,6 +8,7 @@ import com.rumor.yumback.domains.posts.infrastructure.PostLikeJpaRepository;
 import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.infrastructure.UserJpaRepository;
+import com.rumor.yumback.enumeration.PostCategory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,14 +26,13 @@ import java.util.UUID;
 public class PostService {
     private final PostJpaRepository postJpaRepository;
     private final PostLikeJpaRepository postLikeJpaRepository;
-    private final CommentLikeJpaRepository commentLikeJpaRepository;
     private final UserJpaRepository userJpaRepository;
 
     public CommunityDto community(Pageable pageable) {
-        Page<PostDto> popular = postJpaRepository.findAll(PageRequest.of(0, 3, Sort.by("viewCount").descending()))
+        Page<PostDto> popular = postJpaRepository.findAllByCategory(PostCategory.CHAT, PageRequest.of(0, 3, Sort.by("viewCount").descending()))
                 .map(PostDto::from);
 
-        List<PostDto> posts = postJpaRepository.findAll(Sort.by("createdAt").descending()).stream()
+        List<PostDto> posts = postJpaRepository.findAllByCategory(PostCategory.CHAT, PageRequest.of(0, 50, Sort.by("createdAt").descending())).stream()
                 .map(PostDto::from)
                 .toList();
 

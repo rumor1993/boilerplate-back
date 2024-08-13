@@ -2,6 +2,8 @@ package com.rumor.yumback.domains.beadsCrafts.presentation;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.rumor.yumback.domains.beadsCrafts.domain.BeadsCraft;
+import com.rumor.yumback.domains.posts.application.PostDetailDto;
+import com.rumor.yumback.domains.posts.presentation.view.PostDetailView;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.domains.users.presentation.view.UserView;
 import com.rumor.yumback.enumeration.BeadCraftCategory;
@@ -17,12 +19,13 @@ public record BeadsCraftView(
         UserView creator,
         Long likeCount,
         Boolean isLiked,
+        PostDetailView post,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 
 ) {
     @QueryProjection
-    public BeadsCraftView(UUID id, String name, BeadCraftCategory category, String picture, UserView creator, Long likeCount, Boolean isLiked, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BeadsCraftView(UUID id, String name, BeadCraftCategory category, String picture, UserView creator, Long likeCount, Boolean isLiked, PostDetailView post, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -30,6 +33,7 @@ public record BeadsCraftView(
         this.creator = creator;
         this.likeCount = likeCount;
         this.isLiked = isLiked;
+        this.post = post;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -54,6 +58,7 @@ public record BeadsCraftView(
                 UserView.from(beadsCraft.getCreator()),
                 beadsCraft.getLikeCount(),
                 isLiked,
+                PostDetailView.from(PostDetailDto.from(beadsCraft.getPost())),
                 beadsCraft.getCreatedAt(),
                 beadsCraft.getUpdatedAt());
     }

@@ -1,16 +1,16 @@
 package com.rumor.yumback.common;
 
-import com.rumor.yumback.common.errors.OauthUserNotFoundException;
-import com.rumor.yumback.common.errors.StorageException;
-import com.rumor.yumback.common.errors.StorageFileNotFoundException;
-import com.rumor.yumback.common.errors.UserNotFoundException;
+import com.rumor.yumback.common.errors.*;
 import jakarta.validation.UnexpectedTypeException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.Objects;
 
 @ControllerAdvice
 public class CustomControllerAdvice {
@@ -28,9 +28,9 @@ public class CustomControllerAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        ErrorResponse errorResponse = ErrorResponse.create(ex, HttpStatus.BAD_REQUEST, ex.getMessage());
-        return ResponseEntity.status(errorResponse.getStatusCode()).body(errorResponse);
+    public ResponseEntity<CustomErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(HttpStatus.BAD_REQUEST, ex.getFieldError().getDefaultMessage());
+        return ResponseEntity.status(customErrorResponse.code()).body(customErrorResponse);
     }
 
     @ExceptionHandler(UnexpectedTypeException.class)

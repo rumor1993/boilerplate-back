@@ -6,7 +6,9 @@ import com.rumor.yumback.domains.beadsCrafts.application.BeadsCraftService;
 import com.rumor.yumback.domains.beadsCrafts.domain.BeadsCraft;
 import com.rumor.yumback.domains.beadsCrafts.presentation.request.BeadsCraftRequest;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
+import com.rumor.yumback.enumeration.BeadCraftCategory;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,18 +32,18 @@ public class BeadsCraftController {
     private final BeadsCraftService beadsCraftService;
 
     @GetMapping
-    public Page<BeadsCraftView> beadCrafts(@AuthenticationPrincipal CustomOauth2User customOauth2User, @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<BeadsCraftView> beadCrafts(@AuthenticationPrincipal CustomOauth2User customOauth2User, @PageableDefault(size = 80, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam(required = false) BeadCraftCategory category) {
         if (customOauth2User == null) {
-            return beadsCraftService.beadsCrafts(pageable);
+            return beadsCraftService.beadsCrafts(pageable, category);
         }
 
-        return beadsCraftService.beadsCrafts(customOauth2User.getUsername(), pageable);
+        return beadsCraftService.beadsCrafts(customOauth2User.getUsername(), pageable, category);
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public BeadsCraftView addBeadCraft(@AuthenticationPrincipal CustomOauth2User customOauth2User, @Valid @RequestPart BeadsCraftRequest beadsCraftRequest, @RequestPart("file") MultipartFile file) throws URISyntaxException, IOException {
-        BeadsCraft beadsCraft = beadsCraftService.addBeadsCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.category(), file));
-        return BeadsCraftView.from(beadsCraft);
+    public ResponseEntity<SuccessResponse> addBeadCraft(@AuthenticationPrincipal CustomOauth2User customOauth2User, @Valid @RequestPart BeadsCraftRequest beadsCraftRequest, @RequestPart("picture") MultipartFile file) throws URISyntaxException, IOException {
+        beadsCraftService.addBeadsCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.link(), beadsCraftRequest.description(), beadsCraftRequest.category(), file));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.CREATED, "등록되었습니다."));
     }
 
     @PostMapping("/{id}/likes")

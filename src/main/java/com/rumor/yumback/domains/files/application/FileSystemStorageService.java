@@ -25,10 +25,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileSystemStorageService {
     private final FilesProperties filesProperties;
-    private final UserJpaRepository userJpaRepository;
     private final ResourcesProperties resourcesProperties;
 
-    public Path store(MultipartFile file, String folderName) throws IOException {
+    public Path store(MultipartFile file, Path folderName) throws IOException {
         if (file.isEmpty()) {
             throw new RuntimeException("Failed to store empty file.");
         }
@@ -54,19 +53,19 @@ public class FileSystemStorageService {
         }
     }
 
-    public Resource loadAsResource(String filename, String folderName) throws MalformedURLException {
+    public Resource loadAsResource(String filepath) throws MalformedURLException {
         try {
-            Path file = this.load(folderName + "/" + filename);
+            Path file = this.load(filepath);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             }
 
-            throw new StorageFileNotFoundException("Could not read file: " + filename);
+            throw new StorageFileNotFoundException("Could not read file: " + filepath);
 
         } catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+            throw new StorageFileNotFoundException("Could not read file: " + filepath, e);
         }
     }
 
@@ -75,7 +74,7 @@ public class FileSystemStorageService {
     }
 
     // properties 에서 받아서 요청주소 처리 필요
-    public String loadAsUrl(Path savedFile, String folderName) {
+    public String loadAsUrl(Path savedFile, Path folderName) {
         return resourcesProperties.getUrl() + "/files/" + folderName + "/" + savedFile.getFileName();
     }
 }

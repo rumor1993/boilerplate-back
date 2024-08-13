@@ -1,7 +1,9 @@
 package com.rumor.yumback.common.errors;
 
+import org.springframework.http.HttpStatus;
+
 public record CustomErrorResponse(
-        Integer code,
+        HttpStatus code,
         String message
 ) {
 }

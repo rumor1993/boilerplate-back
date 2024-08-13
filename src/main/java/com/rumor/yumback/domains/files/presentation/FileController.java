@@ -2,6 +2,7 @@ package com.rumor.yumback.domains.files.presentation;
 
 import com.rumor.yumback.domains.files.application.FileSystemStorageService;
 import com.rumor.yumback.domains.oauth2.dto.CustomOauth2User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -22,9 +23,13 @@ import java.nio.file.Path;
 public class FileController {
     private final FileSystemStorageService fileSystemStorageService;
 
-    @GetMapping("/{folderName}/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, @PathVariable(required = false) String folderName) throws MalformedURLException {
-        Resource file = fileSystemStorageService.loadAsResource(filename, folderName);
+    @GetMapping("/**")
+    public ResponseEntity<Resource> serveFile(HttpServletRequest request) throws MalformedURLException {
+        String fullPath = request.getRequestURI();
+
+        String basePath = request.getContextPath() + "/files/";
+        String filePath = fullPath.substring(basePath.length());
+        Resource file = fileSystemStorageService.loadAsResource(filePath);
 
         if (file == null) {
             return ResponseEntity.notFound().build();
@@ -35,8 +40,9 @@ public class FileController {
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<String> store(@AuthenticationPrincipal CustomOauth2User customOauth2User, @RequestPart MultipartFile file) throws URISyntaxException, IOException {
-        Path savedFile = fileSystemStorageService.store(file, customOauth2User.getUsername());
-        String uriString = fileSystemStorageService.loadAsUrl(savedFile, customOauth2User.getUsername());
+        Path folderName = Path.of(customOauth2User.getUsername());
+        Path savedFile = fileSystemStorageService.store(file, folderName);
+        String uriString = fileSystemStorageService.loadAsUrl(savedFile, folderName);
 
         return ResponseEntity.ok().body(uriString);
     }
