@@ -50,6 +50,7 @@ public class UserController {
                 cookie.setDomain(resourcesProperties.getDomain());
                 cookie.setHttpOnly(true);
 
+                response.addCookie(cookie);
                 response.addHeader("Set-Cookie", cookie.toString());
             }
         }
