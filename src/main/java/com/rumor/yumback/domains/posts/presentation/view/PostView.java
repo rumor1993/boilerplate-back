@@ -1,5 +1,6 @@
 package com.rumor.yumback.domains.posts.presentation.view;
 
+import com.rumor.yumback.domains.comments.presentation.view.CommentView;
 import com.rumor.yumback.domains.posts.application.PostDto;
 import com.rumor.yumback.domains.posts.domain.Post;
 import com.rumor.yumback.domains.users.domain.User;
@@ -7,6 +8,7 @@ import com.rumor.yumback.enumeration.PostCategory;
 import com.rumor.yumback.utils.PostUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record PostView(
@@ -49,5 +51,4 @@ public record PostView(
     public String getDescription() {
         return PostUtils.extractDescription(this.contents, 200);
     }
-
 }

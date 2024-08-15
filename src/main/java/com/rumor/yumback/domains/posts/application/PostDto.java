@@ -1,10 +1,13 @@
 package com.rumor.yumback.domains.posts.application;
 
+import com.rumor.yumback.domains.comments.domain.Comment;
+import com.rumor.yumback.domains.comments.presentation.view.CommentView;
 import com.rumor.yumback.domains.posts.domain.Post;
 import com.rumor.yumback.domains.users.domain.User;
 import com.rumor.yumback.enumeration.PostCategory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record PostDto(
@@ -30,7 +33,7 @@ public record PostDto(
                 post.getDescription(),
                 post.getContents(),
                 post.getCreator(),
-                (long) post.getComments().size(),
+                getCommentCount(post.getComments()),
                 post.getViewCount(),
                 post.getLikeCount(),
                 isLiked,
@@ -43,4 +46,15 @@ public record PostDto(
         return PostDto.from(post, false);
     }
 
+
+    public static Long getCommentCount(List<Comment> comments) {
+        Long totalCount = 0L;
+
+        for (Comment comment : comments) {
+            totalCount++;
+            totalCount += comment.getReplies().size();
+        }
+
+        return totalCount;
+    }
 }
