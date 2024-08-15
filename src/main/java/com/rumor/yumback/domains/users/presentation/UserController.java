@@ -47,7 +47,7 @@ public class UserController {
             for (Cookie cookie : cookies) {
                 cookie.setMaxAge(0); // 쿠키 만료 시간 설정
                 cookie.setPath("/"); // 경로 설정 (옵션, 필요에 따라 설정)
-                cookie.setDomain(resourcesProperties.getDomain());
+                cookie.setDomain("." + resourcesProperties.getDomain());
                 cookie.setHttpOnly(true);
 
                 response.addCookie(cookie);
