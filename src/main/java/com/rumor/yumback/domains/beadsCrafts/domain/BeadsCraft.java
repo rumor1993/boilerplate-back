@@ -32,6 +32,9 @@ public class BeadsCraft extends AuditableEntity {
 
     private String picture;
 
+    @Column(name = "author_name")
+    private String authorName;
+
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -46,13 +49,14 @@ public class BeadsCraft extends AuditableEntity {
     @Column(name = "like_count", columnDefinition = "bigint default 0")
     private Long likeCount = 0L;
 
-    public BeadsCraft(String name, String link, BeadCraftCategory category, String picture, Post post, User foundUser) {
+    public BeadsCraft(String name, String link, BeadCraftCategory category, String picture, Post post, User foundUser, String authorName) {
         this.name = name;
         this.link = link;
         this.category = category;
         this.picture = picture;
         this.post = post;
         this.creator = foundUser;
+        this.authorName = authorName;
     }
 
     public void decreaseLikeCount() {

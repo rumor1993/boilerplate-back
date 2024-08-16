@@ -42,7 +42,7 @@ public class BeadsCraftController {
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<SuccessResponse> addBeadCraft(@AuthenticationPrincipal CustomOauth2User customOauth2User, @Valid @RequestPart BeadsCraftRequest beadsCraftRequest, @RequestPart("picture") MultipartFile file) throws URISyntaxException, IOException {
-        beadsCraftService.addBeadsCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.link(), beadsCraftRequest.description(), beadsCraftRequest.category(), file));
+        beadsCraftService.addBeadsCraft(customOauth2User.getUsername(), new BeadsCraftRegisterDto(beadsCraftRequest.name(), beadsCraftRequest.link(), beadsCraftRequest.description(), beadsCraftRequest.authorName(), beadsCraftRequest.category(), file));
         return ResponseEntity.ok(new SuccessResponse(HttpStatus.CREATED, "등록되었습니다."));
     }
 

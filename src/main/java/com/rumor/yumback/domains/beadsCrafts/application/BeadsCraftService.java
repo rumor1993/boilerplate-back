@@ -36,7 +36,7 @@ public class BeadsCraftService {
                 .orElseThrow(() -> new RuntimeException("not found user"));
 
         Post savedPost = postJpaRepository.save(new Post(registerDto.name(), PostCategory.CRAFTS, "", registerDto.description(), foundUser));
-        BeadsCraft beadsCraft = new BeadsCraft(registerDto.name(), registerDto.link(), registerDto.category(), "", savedPost, foundUser);
+        BeadsCraft beadsCraft = new BeadsCraft(registerDto.name(), registerDto.link(), registerDto.category(), "", savedPost, foundUser, registerDto.authorName());
         beadsCraftJpaRepository.save(beadsCraft);
 
         Path folderName = Path.of(username).resolve("beads-craft").resolve(beadsCraft.getId().toString());

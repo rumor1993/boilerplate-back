@@ -16,6 +16,7 @@ public record BeadsCraftView(
         String name,
         BeadCraftCategory category,
         String picture,
+        String authorName,
         String link,
         UserView creator,
         Long likeCount,
@@ -26,11 +27,12 @@ public record BeadsCraftView(
 
 ) {
     @QueryProjection
-    public BeadsCraftView(UUID id, String name, BeadCraftCategory category, String picture, String link, UserView creator, Long likeCount, Boolean isLiked, PostDetailView post, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BeadsCraftView(UUID id, String name, BeadCraftCategory category, String picture, String authorName, String link, UserView creator, Long likeCount, Boolean isLiked, PostDetailView post, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.picture = picture;
+        this.authorName = authorName;
         this.link = link;
         this.creator = creator;
         this.likeCount = likeCount;
@@ -57,6 +59,7 @@ public record BeadsCraftView(
                 beadsCraft.getId(),
                 beadsCraft.getName(), beadsCraft.getCategory(),
                 beadsCraft.getPicture(),
+                beadsCraft.getAuthorName(),
                 beadsCraft.getLink(),
                 UserView.from(beadsCraft.getCreator()),
                 beadsCraft.getLikeCount(),

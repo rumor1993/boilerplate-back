@@ -7,6 +7,7 @@ public record BeadsCraftRegisterDto(
         String name,
         String link,
         String description,
+        String authorName,
         BeadCraftCategory category,
         MultipartFile file
 ) {
