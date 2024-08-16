@@ -41,19 +41,13 @@ public class UserController {
 
     @DeleteMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
+        Cookie deleteCookie = new Cookie("Authorization", null);
+        deleteCookie.setMaxAge(0); // 쿠키 만료 시간 설정
+        deleteCookie.setPath("/"); // 경로 설정 (옵션, 필요에 따라 설정)
+        deleteCookie.setDomain(resourcesProperties.getDomain());
+        deleteCookie.setHttpOnly(true);
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                Cookie deleteCookie = new Cookie("Authorization", null);
-                deleteCookie.setMaxAge(0); // 쿠키 만료 시간 설정
-                deleteCookie.setPath("/"); // 경로 설정 (옵션, 필요에 따라 설정)
-                deleteCookie.setDomain(resourcesProperties.getDomain());
-                deleteCookie.setHttpOnly(true);
-
-                response.addCookie(deleteCookie);
-                response.addHeader("Set-Cookie", deleteCookie.toString());
-            }
-        }
+        response.addCookie(deleteCookie);
+        response.addHeader("Set-Cookie", deleteCookie.toString());
     }
 }
