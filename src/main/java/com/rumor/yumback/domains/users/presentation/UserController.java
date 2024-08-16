@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -40,14 +41,18 @@ public class UserController {
     }
 
     @DeleteMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie deleteCookie = new Cookie("Authorization", null);
-        deleteCookie.setMaxAge(0); // 쿠키 만료 시간 설정
-        deleteCookie.setPath("/"); // 경로 설정 (옵션, 필요에 따라 설정)
-        deleteCookie.setDomain(resourcesProperties.getDomain());
-        deleteCookie.setHttpOnly(true);
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Cookie[] cookies = request.getCookies();
 
-        response.addCookie(deleteCookie);
-        response.addHeader("Set-Cookie", deleteCookie.toString());
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setMaxAge(0); // 쿠키 만료 시간 설정
+                cookie.setPath("/"); // 경로 설정 (옵션, 필요에 따라 설정)
+                cookie.setDomain(resourcesProperties.getDomain());
+                cookie.setHttpOnly(true);
+
+                response.addCookie(cookie);
+            }
+        }
     }
 }
